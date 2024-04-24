@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Contact Helper</string>
+    <string name="contact_helper">Contact\nHelper</string>
+    <string name="phone_number">Phone number</string>
+    <string name="xabar_yuborish">Xabar yuborish</string>
+    <string name="name">Name</string>
+    <string name="xabarni_yuborish">Xabarni yuborish</string>
+    <string name="xabar_matni">Xabar matni</string>
+</resources>
