@@ -32,6 +32,7 @@ class SMSActivity : AppCompatActivity() {
                     val text = binding.edtMatn.text.toString()
                     val obj = SmsManager.getDefault()
                     obj.sendTextMessage(contact.number, null, text, null, null)
+                    binding.edtMatn.text.clear()
                     Toast.makeText(this, "Xabar yuborildi", Toast.LENGTH_SHORT).show()
                 }
             } else {
@@ -53,6 +54,7 @@ class SMSActivity : AppCompatActivity() {
                     val text = binding.edtMatn.text.toString()
                     val obj = SmsManager.getDefault()
                     obj.sendTextMessage(contact.number, null, text, null, null)
+                    binding.edtMatn.text.clear()
                     Toast.makeText(this, "Xabar yuborildi", Toast.LENGTH_SHORT).show()
                 }
             }
