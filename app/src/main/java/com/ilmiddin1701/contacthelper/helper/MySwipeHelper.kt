@@ -3,6 +3,8 @@ package com.ilmiddin1701.contacthelper.helper
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.RectF
@@ -15,58 +17,66 @@ import java.util.LinkedList
 
 @SuppressLint("ClickableViewAccessibility")
 abstract class MySwipeHelper(
-    context: Context,
+    val context: Context,
     private val recyclerView: RecyclerView,
-    private var buttonWith: Int
+    internal var buttonWidth: Int
 ) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
     private var buttonList: MutableList<MyButton>? = null
     lateinit var gestureDetector: GestureDetector
     var swipePosition = -1
     var swipeThreshold = 0.5f
-    val buttonBuffer: MutableMap<Int, MutableList<MyButton>>
+    var buttonBuffer: MutableMap<Int, MutableList<MyButton>>
     lateinit var removerQueue: LinkedList<Int>
 
-    abstract fun instantiateMyButton(viewHolder: RecyclerView.ViewHolder,
-                                     buffer: MutableList<MyButton>)
+    abstract fun instantiateMyButton(
+        viewHolder: RecyclerView.ViewHolder,
+        buffer: MutableList<MyButton>
+    )
 
-    private val gestureListener = object:GestureDetector.SimpleOnGestureListener() {
+    private val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
         override fun onSingleTapUp(e: MotionEvent): Boolean {
-            for (button in buttonList!!)
+            for (button in buttonList!!) {
                 if (button.onClick(e.x, e.y))
                     break
+            }
             return true
         }
     }
 
-    private val onTouchListener = View.OnTouchListener {_, event ->
+    private var onTouchListener = View.OnTouchListener { _, motionEvent ->
+        println("kod ishlayapti")
         if (swipePosition < 0) return@OnTouchListener false
-        val point = Point(event.rawX.toInt(), event.rawY.toInt())
+        val point = Point(motionEvent.rawX.toInt(), motionEvent.rawY.toInt())
         val swipeViewHolder = recyclerView.findViewHolderForAdapterPosition(swipePosition)
-        val swipedItem = swipeViewHolder!!.itemView
+        val swipeItem = swipeViewHolder!!.itemView
         val rect = Rect()
-        swipedItem.getGlobalVisibleRect(rect)
+        swipeItem.getGlobalVisibleRect(rect)
+        println("kod ishlayapti oxiri")
 
-        if (event.action == MotionEvent.ACTION_DOWN ||
-            event.action == MotionEvent.ACTION_MOVE ||
-            event.action == MotionEvent.ACTION_UP)
-        {
-            if (rect.top < point.y && rect.bottom > point.y){
-                gestureDetector.onTouchEvent(event)
+        if (motionEvent.action == MotionEvent.ACTION_DOWN ||
+            motionEvent.action == MotionEvent.ACTION_MOVE ||
+            motionEvent.action == MotionEvent.ACTION_UP
+        ) {
+            println("kod ishlayapti oxiri")
+            if (rect.top < point.y && rect.bottom > point.y) {
+                gestureDetector.onTouchEvent(motionEvent)
             } else {
                 removerQueue.add(swipePosition)
                 swipePosition = -1
                 recoverSwipeItem()
             }
         }
+        println("kod ishlayapti oxiri")
         false
     }
 
     @Synchronized
     private fun recoverSwipeItem() {
-        while (!removerQueue.isEmpty()){
+        while (!removerQueue.isEmpty()) {
             val pos = removerQueue.poll()!!.toInt()
-            if (pos > -1){
+
+            if (pos > -1) {
                 recyclerView.adapter!!.notifyItemChanged(pos)
             }
         }
@@ -121,15 +131,16 @@ abstract class MySwipeHelper(
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         val pos = viewHolder.adapterPosition
-        if (swipePosition != pos)
+        if (swipePosition != pos) {
             removerQueue.add(swipePosition)
+        }
         swipePosition = pos
         if (buttonBuffer.containsKey(swipePosition))
             buttonList = buttonBuffer[swipePosition]
         else
             buttonList!!.clear()
         buttonBuffer.clear()
-        swipeThreshold = 0.5f*buttonList!!.size.toFloat()*buttonWith.toFloat()
+        swipeThreshold = 0.5f * buttonList!!.size.toFloat() * buttonWidth.toFloat()
         recoverSwipeItem()
     }
 
@@ -138,57 +149,51 @@ abstract class MySwipeHelper(
     }
 
     override fun getSwipeEscapeVelocity(defaultValue: Float): Float {
-        return 0.1f*defaultValue
+        return 0.1f * defaultValue
     }
 
     override fun getSwipeVelocityThreshold(defaultValue: Float): Float {
-        return 5.0f*    defaultValue
+        return 5.0f * defaultValue
     }
 
-    override fun onChildDraw(
-        c: Canvas,
-        recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder,
-        dX: Float,
-        dY: Float,
-        actionState: Int,
-        isCurrentlyActive: Boolean
-    ) {
+    override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
         val pos = viewHolder.adapterPosition
         var translationX = dX
-        var itemView = viewHolder.itemView
-        if (pos < 0){
+        val itemView = viewHolder.itemView
+
+        if (pos < 0) {
             swipePosition = pos
             return
         }
-        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE){
-            if (dX < 0){
+        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+            if (dX < 0) {
                 var buffer: MutableList<MyButton> = ArrayList()
-                if (!buttonBuffer.containsKey(pos)){
+                if (!buttonBuffer.containsKey(pos)) {
                     instantiateMyButton(viewHolder, buffer)
                     buttonBuffer[pos] = buffer
+                    println("${buffer.size} va $pos  if")
                 } else {
+                    println("${buffer.size} va $pos  else , ${buttonBuffer[pos]}")
                     buffer = buttonBuffer[pos]!!
                 }
-                translationX = dX*buffer.size.toFloat() * buttonWith.toFloat() / itemView.width
+
+                translationX = dX * buffer.size.toFloat() * buttonWidth.toFloat() / itemView.width
                 drawButton(c, itemView, buffer, pos, translationX)
             }
         }
         super.onChildDraw(c, recyclerView, viewHolder, translationX, dY, actionState, isCurrentlyActive)
     }
 
-    private fun drawButton(
-        c: Canvas,
-        itemView: View,
-        buffer: MutableList<MyButton>,
-        pos: Int,
-        translationX: Float
-    ) {
+    private fun drawButton(c: Canvas, itemView: View, buffer: MutableList<MyButton>, pos: Int, translationX: Float) {
         var right = itemView.right.toFloat()
-        val dButtonWidth = -1*translationX/buffer.size
-        for (button in buffer){
+        val dButtonWidth = -1 * translationX / buffer.size
+        for (button in buffer) {
             val left = right - dButtonWidth
-            button.onDraw(c, RectF(left,itemView.top.toFloat(),right,itemView.bottom.toFloat()),pos)
+            button.onDraw(
+                c,
+                RectF(left + 15, itemView.top.toFloat(), right, itemView.bottom.toFloat()),
+                pos
+            )
             right = left
         }
     }

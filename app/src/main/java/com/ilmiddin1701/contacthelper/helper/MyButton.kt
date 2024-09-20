@@ -40,9 +40,11 @@ class MyButton(
     fun onDraw(c: Canvas, rectF: RectF, pos: Int) {
         val p = Paint()
         p.color = color
-        c.drawRect(rectF, p)
 
-        //text
+        // Dumaloq burchaklar chizish
+        c.drawRoundRect(rectF, 15f, 15f, p)
+
+        // Text
         p.color = Color.WHITE
         p.textSize = textSize.toFloat()
 
@@ -59,11 +61,11 @@ class MyButton(
         if (imageRecursId == 0) {
             x = cWidth / 2f - r.width() / 2f - r.left.toFloat()
             y = cHeight / 2f + r.height() / 2f - r.bottom.toFloat()
-            c.drawText(text, rectF.left+x, rectF.top+y, p)
-        }else{
+            c.drawText(text, rectF.left + x, rectF.top + y, p)
+        } else {
             val d = ContextCompat.getDrawable(context, imageRecursId)
             val bitmap = drawableToBitmap(d)
-            c.drawBitmap(bitmap, (rectF.left+rectF.right)/2-25, (rectF.top+rectF.bottom)/2-20, p)
+            c.drawBitmap(bitmap, (rectF.left + rectF.right) / 2 - 25, (rectF.top + rectF.bottom) / 2 - 20, p)
         }
 
         clickRegion = rectF

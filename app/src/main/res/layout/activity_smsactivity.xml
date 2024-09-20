@@ -63,7 +63,8 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="20dp">
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="20dp">
 
             <TextView
                 android:id="@+id/txt_name_sms"
