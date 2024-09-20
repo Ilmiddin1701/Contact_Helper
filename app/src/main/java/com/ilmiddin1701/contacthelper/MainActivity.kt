@@ -125,12 +125,12 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        val dialog = AlertDialog.Builder(this).create()
         if (requestCode == 1) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 readContact()
             } else {
                 // Kontaktlarni o'qish uchun ruxsat berilmagan bo'lsa
-                val dialog = AlertDialog.Builder(this).create()
                 dialog.setMessage("Kontaktlarni o'qish uchun ruxsat berishingiz kerak!")
                 dialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK") { _, _ -> dialog.cancel() }
                 dialog.show()
@@ -140,10 +140,10 @@ class MainActivity : AppCompatActivity() {
                 // Agar qo'ng'iroq qilish ruxsati berilgan bo'lsa, uni yana qo'ng'iroq qilish paytida ishlatish mumkin
             } else {
                 // Qo'ng'iroq qilish uchun ruxsat berilmagan bo'lsa
-                val dialog = AlertDialog.Builder(this).create()
-                dialog.setMessage("Qo'ng'iroq qilish uchun ruxsat berishingiz kerak!")
-                dialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK") { _, _ -> dialog.cancel() }
-                dialog.show()
+                val dialog1 = AlertDialog.Builder(this).create()
+                dialog1.setMessage("Qo'ng'iroq qilish uchun ruxsat berishingiz kerak!")
+                dialog1.setButton(AlertDialog.BUTTON_POSITIVE, "OK") { _, _ -> dialog.cancel() }
+                dialog1.show()
             }
         }
     }

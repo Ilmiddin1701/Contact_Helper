@@ -101,10 +101,10 @@
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
             android:gravity="start"
-            android:textColorHint="#B3B3B3"
             android:hint="@string/xabar_matni"
             android:padding="10dp"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textColorHint="#B3B3B3" />
     </androidx.cardview.widget.CardView>
 
     <androidx.constraintlayout.widget.Guideline

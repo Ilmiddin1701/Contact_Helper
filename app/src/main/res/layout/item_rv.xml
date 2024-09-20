@@ -3,10 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="20dp"
-    android:layout_marginEnd="20dp"
-    android:backgroundTint="@color/white"
+    android:layout_marginHorizontal="15dp"
     android:layout_marginBottom="10dp"
+    android:backgroundTint="@color/white"
     app:cardCornerRadius="10dp"
     app:cardElevation="5dp">
 
@@ -20,13 +19,15 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
+            android:contentDescription="@string/contact_image"
             android:padding="10dp"
+            android:layout_marginStart="2dp"
             android:src="@drawable/ic_call_1" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="7dp"
+            android:layout_marginHorizontal="7dp"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
@@ -35,10 +36,10 @@
                 android:id="@+id/tvName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name"
                 android:layout_marginBottom="6dp"
+                android:text="@string/app_name"
                 android:textColor="@color/black"
-                android:textSize="22sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/tvNumber"
@@ -46,14 +47,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/phone_number"
                 android:textColor="#B3B3B3"
-                android:textSize="17sp" />
+                android:textSize="16sp" />
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/btnMore"
-            android:layout_width="40dp"
-            android:layout_height="match_parent"
-            android:padding="5dp"
-            android:src="@drawable/ic_more" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
