@@ -94,29 +94,45 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Kontaktlarni o'qish funksiyasi
+    // Kontaktlarni o'qib olish funksiyasi
     @SuppressLint("Range")
     private fun readContact() {
         contactList = ArrayList()
+        val contactSet = HashSet<String>() // Ism va raqamlar uchun to'plam
+
+        // Kontaktlarni alifbo tartibida o'qish
         val contacts = contentResolver.query(
             ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
             null,
             null,
             null,
-            null
+            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC" // Alifbo bo'yicha saralash
         )
+
         while (contacts!!.moveToNext()) {
-            val contact = Contact(
-                contacts.getString(contacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)),
-                contacts.getString(contacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-            )
-            contactList.add(contact)
+            val name = contacts.getString(contacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
+            // Raqamni tozalash va formatlash
+            val number = contacts.getString(contacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+                .replace("\\s+".toRegex(), "") // Barcha bo'sh joylarni o'chirish
+                .trim() // Raqamni qirralaridan bo'sh joylarni o'chirish
+
+            // Ism yoki raqam bir xil bo'lsa o'qimaslik
+            val contactKey = "$name|$number" // Ism va raqamni birlashtirib kalit yaratamiz
+
+            if (!contactSet.contains(contactKey)) {
+                contactSet.add(contactKey) // Agar bunday ism va raqam mavjud bo'lmasa qo'shamiz
+                val contact = Contact(name, number)
+                contactList.add(contact)
+            }
         }
+
         contacts.close()
 
+        // RecyclerView adapterini yangilash
         rvAdapter = RvAdapter(contactList)
         binding.rv.adapter = rvAdapter
     }
+
 
     // Ruxsat natijalarini qayta ishlash
     override fun onRequestPermissionsResult(
